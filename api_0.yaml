@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Pepiti stats api - v0
+  description: it is a public api to get the same information published in https://pepiti.com/stats
+  contact:
+    email: me@agalera.dev
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://pepiti.com/stats/api/v0
+tags:
+  - name: stats
+    description: Everything about stats
+
+paths:
+  /summary:
+    get:
+      tags:
+        - stats
+      summary: gets the total number of laps and records stored
+      operationId: getSummary
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  laps:
+                    type: integer
+                  records:
+                    type: integer
+  /records:
+    get:
+      tags:
+        - stats
+      summary: gets the records of all the tracks
+      description: gets the records of all the tracks, a maximum of 10 per track
+      operationId: getRecords
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  track_name:
+                    $ref: "#/lap"
+                  
+  /rider/{guid}:
+    get:
+      tags:
+        - stats
+      summary: gets the records for guid of all the tracks
+      operationId: getRiderRecords
+      parameters:
+        - name: guid
+          in: path
+          description: Rider guid
+          required: true
+          schema:
+            type: string
+            default: FF01100001013A65F0
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/lap"
+  /rider/{guid}/{track}:
+    get:
+      tags:
+        - stats
+      summary: gets the records for guid per track
+      operationId: getRiderRecordsPerTrack
+      parameters:
+        - name: guid
+          in: path
+          description: Rider guid
+          required: true
+          schema:
+            type: string
+            default: FF01100001013A65F0
+        - name: track
+          in: path
+          description: Track name
+          required: true
+          schema:
+            type: string
+            default: Campillos_V1.0
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  laps:
+                    type: array
+                    items:
+                      $ref: "#/lap"
+  /records/{track}:
+    get:
+      tags:
+        - stats
+      summary: gets the records for track
+      operationId: getRecordsPerTrack
+      parameters:
+        - name: track
+          in: path
+          description: Track name
+          required: true
+          schema:
+            type: string
+            default: Campillos_V1.0
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/lap"
+
+
+lap:
+  type: object
+  properties:
+    _id:
+      type: string
+    category:
+      type: string
+    rider_guid:
+      type: string
+    track:
+      type: string
+    average_speed:
+      type: number
+      format: float
+    bike:
+      type: string
+    lap_time:
+      type: integer
+    rider_name:
+      type: string
+    split_1:
+      type: integer
+    split_2:
+      type: integer
